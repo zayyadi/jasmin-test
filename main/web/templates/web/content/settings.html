@@ -1,0 +1,52 @@
+{% extends "web/base.html" %}
+{% load static i18n %}
+{% block title %}Settings{% endblock title %}
+{% block extracss %}{% endblock extracss %}
+{% block content %}
+
+<section>
+    <div class="w-auto h-auto mr-4 mt-10 mb-2">
+        <div class="flex flex-no-wrap">
+            <!-- Earnings (Monthly) Card Example -->
+            <div class="col-xl-2 col-md-6 mb-4">
+                <a href="{% url 'web:settings' %}" class="text-decoration-none">
+                    <div class="bg-primary shadow rounded-lg overflow-hidden">
+                        <div class="p-4">
+                            <div class="d-flex align-items-center">
+                                <div class="flex-shrink-0">
+                                    <i class="fas fa-user-friends fa-2x text-light"></i>
+                                </div>
+                                <div class="ms-4">
+                                    <div class="text-xs font-bold text-light uppercase mb-1">
+                                        {% trans "SMPP Monitoring" %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="col-xl-2 col-md-2 mb-4">
+                <a href="{% url 'web:user_settings' %}" class="text-decoration-none">
+                    <div class="bg-primary shadow rounded-lg overflow-hidden">
+                        <div class="p-4">
+                            <div class="d-flex align-items-center">
+                                <div class="flex-shrink-0">
+                                    <i class="fas fa-user-friends fa-2x text-light"></i>
+                                </div>
+                                <div class="ms-4">
+                                    <div class="text-xs font-bold text-light uppercase mb-1">
+                                        {% trans "User Monitoring" %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+    
+</section>
+
+{% endblock %}

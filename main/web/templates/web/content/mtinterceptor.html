@@ -1,0 +1,143 @@
+{% extends "web/base.html" %}
+{% load static i18n %}
+{% block title %}{% trans "MT Interceptor" %}{% endblock title %}
+{% block extracss %}{% endblock extracss %}
+{% block content %}
+<h1 class="h3 mb-2 text-gray-800">{% trans "MT interceptor" %}</h1>
+<p><small class="muted-text">{% trans "MT is referred to Mobile Originated, a SMS-MO is an SMS sent from mobile" %}</small></p>
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h4>
+            <button class="btn btn-success btn-sm float-right" id="add_new_obj"><i class="fas fa-plus"></i> {% trans "Add New" %}</button>
+        </h4>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover table-striped table-sm" id="sortable-table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>{% trans "Type" %}</th>
+                        <th>{% trans "Order" %}</th>
+                        <th>{% trans "Script" %}</th>
+                        <th>{% trans "Fitlers" %}</th>
+                        <th class="text-center">{% trans "Option" %}</th>
+                    </tr>
+                </thead>
+                <tbody id="collectionlist"></tbody>
+                <!-- <tbody class="isEmpty" style="display:none;">
+                    <tr>
+                        <td colspan="6" class="text-center"><i class="fas fa-cloud-upload-alt text-metal" style="font-size:5rem;"></i><br>{% trans "No MT interceptor" %}</td>
+                    </tr>
+                </tbody> -->
+            </table>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="collection_modal" tabindex="-1" role="dialog" aria-labelledby="collection_modalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <form id="add_modal_form" style="display:none" action="{% url 'web:mtinterceptor_view_manage' %}" method="post">{% csrf_token %}
+                <div class="modal-header">
+                    <h5 class="modal-title" id="collection_modalLabel">{% trans "Add New MT interceptor" %}</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-info">
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-2 col-form-label">{% trans "Type" %}</label>
+                        <div class="col-sm-10">
+                            <select name="type" class="form-control select">
+                                <option>DefaultInterceptor</option><option>StaticMTInterceptor</option>
+                            </select>
+                            <small class="text-muted">{% trans "One of the supported MO Routes: DefaultInterceptor and  StaticMTInterceptor" %}</small>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-2 col-form-label">{% trans "Order" %}</label>
+                        <div class="col-sm-10">
+                            <input type="text" name="order" class="form-control" placeholder="{% trans 'Order' %}" required>
+                            <small class="text-muted">{% trans "MT Interceptor priority order" %}</small>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-2 col-form-label">{% trans "Script" %}</label>
+                        <div class="col-sm-10">
+                            <input type="text" name="script" class="form-control" placeholder="{% trans 'Script' %}" required>
+                            <small class="text-muted">{% trans "Python script location" %}</small>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label class="col-sm-2 col-form-label">{% trans "Filters" %}</label>
+                        <div class="col-sm-10">
+                            <select name="filters" class="form-control" multiple></select>
+                            <small class="text-muted">{% trans "Filters" %}</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">{% trans "Cancel" %}</button>
+                    <button type="submit" class="btn btn-primary">{% trans "Add New MT interceptor" %}</button>
+                </div>
+                <input type="hidden" name="s" value="add">
+            </form>
+            <form id="edit_modal_form" style="display:none" action="{% url 'web:mtinterceptor_view_manage' %}" method="post">{% csrf_token %}
+                <div class="modal-header">
+                    <h5 class="modal-title" id="collection_modalLabel">{% trans "Edit MTInterceptor" %}</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-info">
+                        <span>{% trans "Connector restart is required only when changing the following parameters:" %}
+                        <strong>Type, Order, Script and Filters</strong>
+                        {% trans "any other change is applied without requiring connector to be restarted." %}
+                        </span>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-2 col-form-label">{% trans "TYPE" %}</label>
+                        <div class="col-sm-10">
+                            <input type="text" name="type" class="form-control" placeholder="{% trans 'Type' %}">
+                            <small class="text-muted">{% trans "MTInterceptor type" %}</small>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-2 col-form-label">{% trans "Order" %}</label>
+                        <div class="col-sm-10">
+                            <input type="text" name="order" class="form-control" placeholder="{% trans 'Order' %}">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-2 col-form-label">{% trans "Script" %}</label>
+                        <div class="col-sm-10">
+                            <input type="text" name="script" class="form-control" placeholder="{% trans 'Python Script File' %}">
+                            <small class="text-muted">{% trans "Python Script file" %}</small>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-2 col-form-label">{% trans "Filters" %}</label>
+                        <div class="col-sm-10">
+                            <select name="filters" class="form-control" multiple></select>
+                            <small class="text-muted">{% trans "Always required except <b>DefaultRoute</b> option" %}</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">{% trans "Cancel" %}</button>
+                    <button type="submit" class="btn btn-primary">{% trans "Update" %}</button>
+                </div>
+                <input type="hidden" name="s" value="edit">
+            </form> 
+        </div>
+    </div>
+</div>
+{% endblock content %}
+{% block extrajs %}
+<script>
+var main_trans = {
+    url2filters: "{% url 'web:filters_view_manage' %}",
+};   
+</script>
+<script src="{% static 'web/content/mtinterceptor.js' %}"></script>
+{% endblock extrajs %}

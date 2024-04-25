@@ -1,0 +1,214 @@
+{% extends "web/base.html" %}
+{% load static i18n %}
+{% block title %}{% trans "Settings" %}{% endblock title %}
+{% block extracss %}{% endblock extracss %}
+{% block content %}
+
+
+{% csrf_token %}
+<h1 class="h3 mb-2 text-gray-800">{% trans "USER MONITOR SETTINGS" %}</h1>
+
+<div class="card shadow mb-4">
+  <div class="card-header py-3">
+      <h4>
+          <button class="btn btn-success btn-sm float-right" id="add_new_obj"><i class="fas fa-plus"></i>Add New</button>
+      </h4>
+  </div>
+  <div class="card shadow mb-4">
+    <div class="card-body">
+      <div class="table-responsive">
+        <table class="table table-hover table-striped table-bordered table-sm" id="sortable-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>ID</th>
+              <th>UID</th>
+              <th>URL</th>
+              <th>designated_bound</th>
+              <th>EMAIL LIST</th>
+              <th class="text-center">Option</th>
+            </tr>
+          </thead>
+          <tbody id="collectionlist"></tbody>
+          <!-- <tbody class="isEmpty" style="display:none;">
+            <tr>
+              <td colspan="6" class="text-center"><i class="fas fa-cloud-upload-alt text-metal" style="font-size:5rem;"></i><br>{% trans "No MO Router" %}</td>
+          </tr>
+          </tbody> -->
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="collection_modal" tabindex="-1" role="dialog" aria-labelledby="collection_modalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <form id="add_modal_form" style="display:none" action="{% url 'web:user_manage' %}" method="post">{% csrf_token %}
+                <div class="modal-header">
+                    <h5 class="modal-title" id="collection_modalLabel">Add New Settings</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                </div>
+                <div class="modal-body">
+
+                    <div class="form-group row">
+                        <label class="col-sm-2 col-form-label"> {% trans "UID" %}</label>
+                        <div class="col-sm-10">
+                            <select name="uid" class="form-control" multiple></select>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                      <label class="col-sm-2 col-form-label">{% trans "URL" %}</label>
+                      <div class="col-sm-10">
+                          <input type="text" name="url" class="form-control" placeholder="urls">
+                      </div>
+                    </div>
+                    <div class="form-group row">
+                      <label class="col-sm-2 col-form-label">{% trans "DESIGNATED BOUND COUNT" %}</label>
+                      <div class="col-sm-10">
+                          <input type="text" name="designated_bound" class="form-control" placeholder="designated_bound">
+                      </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label class="col-sm-2 col-form-label">{% trans "EMAIL" %}</label>
+                        <div class="tag-container" id="tagContainer"></div>
+                            <input type="text" name="email_list" id="emailInput" placeholder="Type email and press Enter, comma, or space">
+                    </div>
+
+                    
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Add New Settings</button>
+                </div>
+                <input type="hidden" name="s" value="add">
+            </form>
+
+            <form id="edit_modal_form" style="display:none" action="{% url 'web:user_manage' %}" method="post">{% csrf_token %}
+                <div class="modal-header">
+                    <h5 class="modal-title" id="collection_modalLabel">{% trans "Edit Settings" %}</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                </div>
+                <div class="modal-body">
+                                        
+                <div class="form-group row">
+                    <label class="col-sm-2 col-form-label"> {% trans "UID" %}</label>
+                    <div class="col-sm-10">
+                        <select name="uid" class="form-control" multiple></select>
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                  <label class="col-sm-2 col-form-label">{% trans "URL" %}</label>
+                  <div class="col-sm-10">
+                      <input type="text" name="url" class="form-control" placeholder="urls">
+                  </div>
+                </div>
+
+                <div class="form-group row">
+                  <label class="col-sm-2 col-form-label">{% trans "DESIGNATED BOUND COUNT" %}</label>
+                  <div class="col-sm-10">
+                      <input type="text" name="designated_bound" class="form-control" placeholder="designated_bound">
+                  </div>
+                </div>
+
+                <div class="form-group row">
+                  <label class="col-sm-2 col-form-label">{% trans "EMAIL" %}</label>
+                  <div class="tag-container" id="tagContainerEdit"></div>
+                      <input type="text" name="email_list" id="emailInputEdit" placeholder="Type email and press Enter, comma, or space">
+                </div>
+
+                  
+                </div>
+                  <div class="modal-footer">
+                      <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
+                      <button type="submit" class="btn btn-primary">Update</button>
+                  </div>
+                <input type="hidden" name="s" value="edit">
+                <input type="hidden" name="id" value="">
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}
+{% block extrajs %}
+<script>
+  var main_trans = {
+    url2users: "{% url 'web:users_view_manage' %}",
+  }
+</script>
+<script>
+  const tagContainer = document.getElementById("tagContainer");
+  const tagContainerEdit = document.getElementById("tagContainerEdit");
+  const emailInput = document.getElementById("emailInput");
+  const emailInputEdit = document.getElementById("emailInputEdit");
+
+  emailInput.addEventListener("input", function(event) {
+    const inputText = event.target.value.trim();
+    if (event.inputType === "insertText" && (event.data === "," || event.data === " ")) {
+      addTags(inputText);
+      event.target.value = "";
+    }
+  });
+
+  emailInput.addEventListener("keydown", function(event) {
+    const inputText = event.target.value.trim();
+    if (event.key === "Enter" || event.key === " " || event.key === ",") {
+      event.preventDefault();
+      addTags(inputText);
+      event.target.value = "";
+    }
+  });
+  emailInputEdit.addEventListener("input", function(event) {
+    const inputText = event.target.value.trim();
+    if (event.inputType === "insertText" && (event.data === "," || event.data === " ")) {
+      addTags(inputText);
+      event.target.value = "";
+    }
+  });
+
+  emailInputEdit.addEventListener("keydown", function(event) {
+    const inputText = event.target.value.trim();
+    if (event.key === "Enter" || event.key === " " || event.key === ",") {
+      event.preventDefault();
+      addTags(inputText);
+      event.target.value = "";
+    }
+  });
+
+  function addTags(emails) {
+    const emailArray = emails.split(/[\s,]+/).filter(email => email !== "");
+    emailArray.forEach(email => {
+      addTag(email);
+    });
+  }
+  
+  function addTag(email) {
+    const tag = document.createElement("div");
+    tag.className = "tag";
+    tag.innerHTML = `
+      <span>${email}</span>
+      <span class="tag-close" onclick="removeTag(this)">x</span>
+    `;
+    tagContainer.appendChild(tag);
+  }
+  function addTag(email) {
+    const tag = document.createElement("div");
+    tag.className = "tag";
+    tag.innerHTML = `
+      <span>${email}</span>
+      <span class="tag-close" onclick="removeTag(this)">x</span>
+    `;
+    tagContainerEdit.appendChild(tag);
+  }
+
+  function removeTag(tagElement) {
+    tagContainer.removeChild(tagElement.parentElement);
+  }
+  function removeTagEdit(tagElement) {
+    tagContainerEdit.removeChild(tagElement.parentElement);
+  }
+</script>
+<script src="{% static 'web/content/user_settings.js' %}"></script>
+{% endblock extrajs %}
