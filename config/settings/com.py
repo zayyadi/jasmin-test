@@ -91,7 +91,7 @@ TEMPLATES = [
         "DIRS": [
             str(APPS_DIR.path("templates")),
         ],
-        # "APP_DIRS": True,
+        "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
                 "django.template.context_processors.debug",
@@ -104,10 +104,10 @@ TEMPLATES = [
                 "django.contrib.messages.context_processors.messages",
                 "main.core.context_processors.site",
             ],
-            "loaders": (
-                "django.template.loaders.filesystem.Loader",
-                "django.template.loaders.app_directories.Loader",
-            ),
+            # "loaders": (
+            #     "django.template.loaders.filesystem.Loader",
+            #     "django.template.loaders.app_directories.Loader",
+            # ),
         },
     },
 ]
@@ -130,8 +130,6 @@ AUTH_PASSWORD_VALIDATORS = [
 ASGI_APPLICATION = "config.asgi.application"
 
 WSGI_APPLICATION = "config.wsgi.application"
-
-ROOT_URLCONF = "config.urls"
 
 AUTH_USER_MODEL = "users.User"
 
@@ -266,6 +264,7 @@ SUBMIT_LOG = bool(os.environ.get("SUBMIT_LOG", "0"))
 
 #
 ROOT_URLCONF = "config.urls"
+
 PUBLIC_SCHEMA_URLCONF = "main.tenants.urls"
 """
 SYSCTL_HEALTH_CHECK boolean field to enable Jasmin Health Check UI Monitoring

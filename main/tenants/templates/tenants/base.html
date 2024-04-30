@@ -1,26 +1,73 @@
+{% load static i18n %}
 <!DOCTYPE html>
-<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
-<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
-<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
-<!--[if gt IE 8]>      <html class="no-js"> <!--<![endif]-->
 <html>
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <title>{% block title %}
-          Home
-        {% endblock title %}</title>
-        <meta name="description" content="">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbpbEi0uSc9IfVKk+aLlPWvbttuxFnLIFbE6oq2bZ6xdgjk4Ssk94ZTDscQ==" crossorigin="anonymous">
-    </head>
-   
-    <body>
-        {% block content  %}
-        <!--[if lt IE 7]>
-            <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="#">upgrade your browser</a> to improve your experience.</p>
-        <![endif]-->
-        
-    </body>
-        {% endblock %}
+<head>
+	<meta charset="utf-8" />
+	<title>{% block title %}{% trans "Home" %}{% endblock title %}</title>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<meta name="robots" content="all,follow">
+	<link rel="stylesheet" type="text/css" href="{% static 'assets/css/base.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.2/css/all.min.css" integrity="sha512-1sCRPdkRXhBV2PBLUdRb4tMg1w2YPf37qatUFeS7zlBy7jJI8Lf4VHwWfZZfpXtYSLy85pkm9GaYVYMfw5BC1A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <!-- <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs4/dt-1.11.5/datatables.min.css"/> -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.css" />
+    <!-- <link href="{% static 'main.css' %}" rel="stylesheet"> -->
+    
+	{% block extracss %}{% endblock extracss %}
+</head>
+
+<body id="page-top">
+<div id="wrapper">
+    <div id="content-wrapper" class="d-flex flex-column">
+        <div id="content">
+            {% include "web/includes/topbar.html" %}
+            <div class="container-fluid">
+				{% block content %}{% endblock content %}
+            </div>
+        </div>
+        {% include 'web/includes/footer.html' %}
+    </div>
+</div>
+
+<div class="modal fade" id="quick_display_modal" role="dialog">
+    <div class="modal-dialog" style="max-width:80%;">
+        <div class="modal-content" style="height:90vh;">
+            <div class="modal-header">
+                <h4 class="modal-title">{% trans "Show Details" %}</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<a class="scroll-to-top rounded" href="#page-top"><i class="fas fa-angle-up"></i></a>
+<!-- <script src="{% static 'assets/vendor/jquery/jquery.min.js' %}"></script> -->
+<!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script> -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="{% static 'assets/vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+<script src="{% static 'assets/vendor/jquery-easing/jquery.easing.min.js' %}"></script>
+<script src="{% static 'assets/vendor/jquery-validation/jquery.validate.min.js' %}"></script>
+<script src="{% static 'assets/vendor/jquery-validation/additional-methods.min.js' %}"></script>
+<script src="{% static 'assets/vendor/toastr/toastr.min.js' %}"></script>
+<script src="{% static 'assets/vendor/sweetalert/sweetalert.min.js' %}"></script>
+<script src="{% static 'assets/js/sb-admin-2.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'web/global.js' %}"></script>
+<!-- <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script> -->
+<!-- <script type="text/javascript" src="https://cdn.datatables.net/v/bs4/dt-1.11.5/datatables.min.js"></script> -->
+<script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.js"></script>
+
+<script>
+var global_trans = {
+    areyousuretodelete: "{% trans 'Are you sure to delete?' %}",
+	no: "{% trans 'No' %}",
+	yes: "{% trans 'Yes' %}",
+	youwontabletorevertthis: "{% trans 'You wont be able to revert this!' %}",
+};
+</script>
+{% block extrajs %}{% endblock extrajs %}
+</body>
 </html>
